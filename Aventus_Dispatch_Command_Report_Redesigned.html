@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aventus Dispatch Command Report</title>
+<style>
+  :root{
+    --bg:#eef3f8;
+    --panel:#ffffff;
+    --ink:#101828;
+    --muted:#667085;
+    --line:#d8e0ea;
+    --navy:#07182f;
+    --navy2:#0f2d52;
+    --blue:#2563eb;
+    --sky:#eaf3ff;
+    --green:#067647;
+    --green-soft:#e8f7ef;
+    --amber:#b54708;
+    --amber-soft:#fff4e5;
+    --red:#b42318;
+    --red-soft:#fff0f0;
+    --purple:#6941c6;
+    --purple-soft:#f3efff;
+    --gray-soft:#f8fafc;
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    font-family:Inter, Arial, Helvetica, sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(37,99,235,.10), transparent 26%),
+      radial-gradient(circle at top right, rgba(6,118,71,.08), transparent 28%),
+      var(--bg);
+    color:var(--ink);
+  }
+
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(255,255,255,.95);
+    border-bottom:1px solid var(--line);
+    box-shadow:0 8px 25px rgba(16,24,40,.08);
+    backdrop-filter:blur(12px);
+  }
+
+  .topbar-inner{
+    max-width:1260px;
+    margin:auto;
+    padding:14px 18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+
+  .top-title{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+
+  .mark{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    background:linear-gradient(135deg,var(--navy),var(--blue));
+    display:grid;
+    place-items:center;
+    color:white;
+    font-weight:900;
+    letter-spacing:.5px;
+  }
+
+  .top-title h1{
+    margin:0;
+    font-size:17px;
+    color:var(--navy);
+    letter-spacing:-.2px;
+  }
+
+  .top-title p{
+    margin:2px 0 0;
+    font-size:12px;
+    color:var(--muted);
+  }
+
+  .actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  button{
+    border:0;
+    border-radius:12px;
+    padding:10px 14px;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+    color:white;
+    background:var(--navy);
+    box-shadow:0 3px 8px rgba(16,24,40,.10);
+  }
+
+  button.primary{background:linear-gradient(135deg,var(--green),#039855)}
+  button.blue{background:linear-gradient(135deg,var(--blue),#1d4ed8)}
+  button.gray{background:#475467}
+  button.red{background:linear-gradient(135deg,var(--red),#dc2626)}
+
+  .wrap{
+    max-width:1260px;
+    margin:24px auto 44px;
+    padding:0 18px;
+  }
+
+  .report{
+    background:rgba(255,255,255,.92);
+    border:1px solid rgba(216,224,234,.9);
+    border-radius:28px;
+    overflow:hidden;
+    box-shadow:0 24px 60px rgba(16,24,40,.10);
+  }
+
+  .hero{
+    display:grid;
+    grid-template-columns:330px 1fr 260px;
+    background:#fff;
+    border-bottom:1px solid var(--line);
+  }
+
+  .brand-card{
+    background:linear-gradient(145deg,var(--navy),var(--navy2));
+    color:#fff;
+    padding:28px;
+    min-height:170px;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .brand-card:after{
+    content:"";
+    position:absolute;
+    width:210px;
+    height:210px;
+    border-radius:50%;
+    right:-80px;
+    top:-70px;
+    background:rgba(255,255,255,.08);
+  }
+
+  .brand-card .brand-name{
+    font-size:34px;
+    font-weight:950;
+    text-transform:uppercase;
+    letter-spacing:.9px;
+    position:relative;
+    z-index:2;
+  }
+
+  .brand-card .brand-sub{
+    margin-top:8px;
+    color:#dbeafe;
+    font-size:13px;
+    line-height:1.45;
+    position:relative;
+    z-index:2;
+  }
+
+  .brand-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    margin-top:22px;
+    padding:8px 10px;
+    border-radius:999px;
+    background:rgba(255,255,255,.11);
+    color:#fff;
+    font-size:12px;
+    font-weight:800;
+    position:relative;
+    z-index:2;
+  }
+
+  .brand-chip:before{
+    content:"";
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#12b76a;
+  }
+
+  .hero-main{
+    padding:28px;
+  }
+
+  .eyebrow{
+    font-size:11px;
+    font-weight:900;
+    color:var(--blue);
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    margin-bottom:8px;
+  }
+
+  .hero-main h2{
+    margin:0;
+    font-size:32px;
+    color:var(--navy);
+    letter-spacing:-.8px;
+  }
+
+  .hero-main p{
+    margin:9px 0 0;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.5;
+    max-width:680px;
+  }
+
+  .status-card{
+    padding:22px;
+    background:linear-gradient(180deg,#f6fbff,#ffffff);
+    border-left:1px solid var(--line);
+  }
+
+  .field label,
+  .status-card label,
+  .mini-section label{
+    display:block;
+    margin-bottom:6px;
+    color:var(--muted);
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.55px;
+    font-weight:900;
+  }
+
+  input, select, textarea{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px 11px;
+    font-size:13px;
+    font-family:Inter, Arial, Helvetica, sans-serif;
+    color:var(--ink);
+    outline:none;
+    background:#fff;
+  }
+
+  textarea{
+    min-height:70px;
+    resize:vertical;
+    line-height:1.38;
+  }
+
+  select{
+    font-weight:800;
+  }
+
+  input:focus, select:focus, textarea:focus{
+    border-color:#93c5fd;
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+  }
+
+  .meta-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:10px;
+    padding:20px 24px 10px;
+    background:#fbfdff;
+  }
+
+  .field{
+    background:#fff;
+    border:1px solid #eef2f6;
+    border-radius:16px;
+    padding:10px;
+  }
+
+  .field input{
+    border:0;
+    padding:0;
+    border-radius:0;
+    font-weight:800;
+  }
+
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(8,1fr);
+    gap:12px;
+    padding:14px 24px 22px;
+    background:#fbfdff;
+  }
+
+  .kpi{
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:12px 10px;
+    background:#fff;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .kpi:before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:5px;
+  }
+
+  .kpi.green:before{background:var(--green)}
+  .kpi.blue:before{background:var(--blue)}
+  .kpi.amber:before{background:#f59e0b}
+  .kpi.red:before{background:var(--red)}
+  .kpi.purple:before{background:var(--purple)}
+
+  .kpi input{
+    border:0;
+    padding:0;
+    font-size:30px;
+    font-weight:950;
+    text-align:center;
+    color:var(--navy);
+  }
+
+  .kpi span{
+    display:block;
+    margin-top:2px;
+    text-align:center;
+    color:var(--muted);
+    font-size:10px;
+    font-weight:900;
+    text-transform:uppercase;
+    line-height:1.25;
+  }
+
+  .content{
+    padding:0 24px 24px;
+  }
+
+  .section{
+    border:1px solid var(--line);
+    border-radius:22px;
+    overflow:hidden;
+    background:#fff;
+    margin-bottom:16px;
+  }
+
+  .section-head{
+    padding:14px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    border-bottom:1px solid var(--line);
+  }
+
+  .section-head.dark{
+    background:linear-gradient(135deg,var(--navy),var(--navy2));
+    color:white;
+  }
+
+  .section-head.light{
+    background:#f7faff;
+  }
+
+  .section-head.issue{
+    background:linear-gradient(135deg,#fff7ed,#fff);
+    border-bottom-color:#fed7aa;
+  }
+
+  .section-head.finance{
+    background:linear-gradient(135deg,#ecfdf5,#fff);
+    border-bottom-color:#bbf7d0;
+  }
+
+  .section-head strong{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.65px;
+  }
+
+  .section-head small{
+    color:var(--muted);
+    font-size:12px;
+    font-weight:700;
+  }
+
+  .section-head.dark small{
+    color:#c7d7ee;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+  }
+
+  th{
+    background:#f1f5f9;
+    color:#344054;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.45px;
+    font-weight:950;
+    text-align:left;
+    padding:10px 8px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+
+  td{
+    padding:8px;
+    border-right:1px solid #edf1f6;
+    border-bottom:1px solid #edf1f6;
+    vertical-align:top;
+  }
+
+  tr:last-child td{border-bottom:0}
+  th:last-child,td:last-child{border-right:0}
+
+  td input, td select, td textarea{
+    border:0;
+    padding:7px 6px;
+    border-radius:8px;
+    background:#fff;
+    font-size:12px;
+  }
+
+  td textarea{
+    min-height:52px;
+  }
+
+  .status-select-clear{background:var(--green-soft)!important;color:var(--green)!important}
+  .status-select-open{background:var(--amber-soft)!important;color:var(--amber)!important}
+  .status-select-escalated{background:var(--red-soft)!important;color:var(--red)!important}
+  .status-select-resolved{background:var(--sky)!important;color:var(--blue)!important}
+  .finance-select{background:var(--green-soft)!important;color:var(--green)!important}
+  .issue-select{background:var(--amber-soft)!important;color:var(--amber)!important}
+
+  .mini-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:16px;
+  }
+
+  .mini-section{
+    padding:16px;
+  }
+
+  .mini-section.finance-box{
+    background:linear-gradient(180deg,#ffffff,#f0fff7);
+  }
+
+  .mini-section.ops-box{
+    background:linear-gradient(180deg,#ffffff,#f4f8ff);
+  }
+
+  .mini-section.handover-box{
+    background:linear-gradient(180deg,#ffffff,#fff8ef);
+  }
+
+  .legend{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    padding:16px;
+  }
+
+  .legend div{
+    border-radius:12px;
+    border:1px solid var(--line);
+    padding:10px;
+    background:#fbfdff;
+    font-size:12px;
+    color:#344054;
+  }
+
+  .legend b{
+    color:var(--navy);
+  }
+
+  .footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:16px 24px 22px;
+    color:var(--muted);
+    font-size:12px;
+    border-top:1px solid var(--line);
+    background:#fbfdff;
+  }
+
+  .help{
+    padding:10px 24px 0;
+    color:#475467;
+    font-size:12px;
+    line-height:1.45;
+  }
+
+  @media(max-width:1000px){
+    .hero{grid-template-columns:1fr}
+    .status-card{border-left:0;border-top:1px solid var(--line)}
+    .meta-grid{grid-template-columns:repeat(2,1fr)}
+    .kpi-grid{grid-template-columns:repeat(2,1fr)}
+    .mini-grid{grid-template-columns:1fr}
+    .legend{grid-template-columns:1fr 1fr}
+  }
+
+  @media print{
+    .topbar{display:none}
+    body{background:white}
+    .wrap{max-width:none;margin:0;padding:0}
+    .report{box-shadow:none;border:0;border-radius:0}
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="top-title">
+        <div class="mark">A</div>
+        <div>
+          <h1>Aventus Dispatch Command Report</h1>
+          <p>Cleaner dashboard, color-coded issues, fixed multi-page PDF export.</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="primary" onclick="downloadPDF()">Download PDF</button>
+        <button class="blue" onclick="addSiteRow()">+ Site</button>
+        <button class="blue" onclick="addIssueRow()">+ Issue</button>
+        <button class="gray" onclick="window.print()">Print Backup</button>
+        <button class="red" onclick="clearForm()">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <form class="report" id="reportForm">
+      <div class="hero">
+        <div class="brand-card">
+          <div>
+            <div class="brand-name">Aventus</div>
+            <div class="brand-sub">Security Dispatch Center<br>Daily Operations Command Report</div>
+          </div>
+          <div class="brand-chip">Live Operations Review</div>
+        </div>
+
+        <div class="hero-main">
+          <div class="eyebrow">Operations + Finance Ready</div>
+          <h2>Daily Dispatch Report Tracker</h2>
+          <p>
+            A clear operational tracker showing every active site, every issue found, what Dispatch fixed,
+            what was escalated, what Finance must review, and what Operations must follow up on.
+          </p>
+        </div>
+
+        <div class="status-card">
+          <label>Overall Daily Status</label>
+          <select id="overallStatus" class="status-select-open">
+            <option>Issues Found & Action Taken</option>
+            <option>All Clear</option>
+            <option>Operations Follow-Up Required</option>
+            <option>Finance Review Required</option>
+            <option>Urgent Escalation</option>
+          </select>
+          <div style="height:14px"></div>
+          <label>Report Priority</label>
+          <select id="reportPriority" class="issue-select">
+            <option>Normal Review</option>
+            <option>High Priority</option>
+            <option>Urgent Review</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="help">
+        This format is designed so Leo, Matt, Elizabeth, Operations, and Finance can understand the day in a few minutes without reading long paragraphs.
+      </div>
+
+      <div class="meta-grid">
+        <div class="field"><label>Report Date</label><input id="reportDate" value="June 24, 2026"></div>
+        <div class="field"><label>Coverage Period</label><input id="coveragePeriod" value="2:00 AM - 10:00 AM"></div>
+        <div class="field"><label>Prepared By</label><input id="preparedBy" value="Faseeh"></div>
+        <div class="field"><label>Reviewed By</label><input id="reviewedBy" value="Matt / Elizabeth"></div>
+        <div class="field"><label>Handover To</label><input id="handoverTo" value="Next CSR"></div>
+        <div class="field"><label>Submitted Time</label><input id="submittedTime" value="10:15 AM PST"></div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi blue"><input id="kpiActive" value="12"><span>Active Sites</span></div>
+        <div class="kpi green"><input id="kpiReviewed" value="12"><span>Reviewed</span></div>
+        <div class="kpi amber"><input id="kpiAttendance" value="2"><span>Attendance Issues</span></div>
+        <div class="kpi amber"><input id="kpiBreak" value="1"><span>Break Issues</span></div>
+        <div class="kpi red"><input id="kpiPing" value="1"><span>Ping Below 90%</span></div>
+        <div class="kpi purple"><input id="kpiReports" value="2"><span>Report Issues</span></div>
+        <div class="kpi green"><input id="kpiFinance" value="1"><span>Finance Items</span></div>
+        <div class="kpi red"><input id="kpiOpen" value="3"><span>Open Items</span></div>
+      </div>
+
+      <div class="content">
+        <div class="section">
+          <div class="section-head dark">
+            <strong>1. Active Site Review</strong>
+            <small>Every active site should appear here, even if there was no issue.</small>
+          </div>
+          <table id="siteTable">
+            <thead>
+              <tr>
+                <th style="width:15%">Site</th>
+                <th style="width:8%">Reviewed</th>
+                <th style="width:14%">Attendance</th>
+                <th style="width:8%">Ping</th>
+                <th style="width:12%">Reports</th>
+                <th style="width:27%">Action Taken / Notes</th>
+                <th style="width:8%">Finance</th>
+                <th style="width:8%">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input value="Harbor Plaza Apts"></td>
+                <td><select><option>Yes</option><option>No</option></select></td>
+                <td><input value="Late clock-in by 18 mins"></td>
+                <td><input value="96%"></td>
+                <td><input value="Complete"></td>
+                <td><textarea>Subcontractor contacted. Guard Owl note updated. Deduction note added for missed time.</textarea></td>
+                <td><select class="finance-select"><option>Deduct</option><option>None</option><option>Review</option><option>Bill</option></select></td>
+                <td><select class="status-select-open"><option>Open</option><option>Clear</option><option>Resolved</option><option>Escalated</option></select></td>
+              </tr>
+              <tr>
+                <td><input value="Sunset Market"></td>
+                <td><select><option>Yes</option><option>No</option></select></td>
+                <td><input value="On time"></td>
+                <td><input value="88%"></td>
+                <td><input value="Hourly gap found"></td>
+                <td><textarea>Guard asked to update missing patrol notes. Sub notified to coach guard on hourly reporting.</textarea></td>
+                <td><select><option>None</option><option>Deduct</option><option>Review</option><option>Bill</option></select></td>
+                <td><select class="status-select-escalated"><option>Escalated</option><option>Clear</option><option>Resolved</option><option>Open</option></select></td>
+              </tr>
+              <tr>
+                <td><input value="Oakview Hotel"></td>
+                <td><select><option>Yes</option><option>No</option></select></td>
+                <td><input value="No issue"></td>
+                <td><input value="100%"></td>
+                <td><input value="Complete"></td>
+                <td><textarea>No operational issue found during review.</textarea></td>
+                <td><select><option>None</option><option>Deduct</option><option>Review</option><option>Bill</option></select></td>
+                <td><select class="status-select-clear"><option>Clear</option><option>Resolved</option><option>Open</option><option>Escalated</option></select></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <div class="section-head issue">
+            <strong>2. Issue Tracker</strong>
+            <small>Problem found → action taken → owner → next step.</small>
+          </div>
+          <table id="issueTable">
+            <thead>
+              <tr>
+                <th style="width:13%">Site</th>
+                <th style="width:14%">Issue Type</th>
+                <th style="width:27%">Action Taken by Dispatch</th>
+                <th style="width:16%">Escalated / Owner</th>
+                <th style="width:15%">Next Step</th>
+                <th style="width:7%">Priority</th>
+                <th style="width:8%">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input value="Harbor Plaza Apts"></td>
+                <td><select class="issue-select"><option>Late Clock-In</option><option>Early Clock-Out</option><option>Missed Clock-Out</option><option>No-Show</option><option>Break Issue</option><option>Low Ping Score</option><option>Poor Report</option><option>Incident</option><option>Client Complaint</option><option>Hotline Issue</option></select></td>
+                <td><textarea>Called subcontractor and advised correction. Guard Owl note updated.</textarea></td>
+                <td><input value="Subcontractor / Finance"></td>
+                <td><input value="Confirm deduction if needed"></td>
+                <td><select class="issue-select"><option>Medium</option><option>High</option><option>Low</option></select></td>
+                <td><select class="status-select-open"><option>Open</option><option>Resolved</option><option>Escalated</option></select></td>
+              </tr>
+              <tr>
+                <td><input value="Sunset Market"></td>
+                <td><select class="issue-select"><option>Poor Report</option><option>Late Clock-In</option><option>Early Clock-Out</option><option>Missed Clock-Out</option><option>No-Show</option><option>Break Issue</option><option>Low Ping Score</option><option>Incident</option><option>Client Complaint</option><option>Hotline Issue</option></select></td>
+                <td><textarea>Guard told to rewrite report with location checked, observation, and action taken.</textarea></td>
+                <td><input value="Subcontractor"></td>
+                <td><input value="Check corrected report next shift"></td>
+                <td><select><option>Low</option><option>Medium</option><option>High</option></select></td>
+                <td><select class="status-select-escalated"><option>Escalated</option><option>Open</option><option>Resolved</option></select></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mini-grid">
+          <div class="section">
+            <div class="section-head finance"><strong>3. Finance Review</strong></div>
+            <div class="mini-section finance-box">
+              <label>Payroll, billing, invoice, deduction, or extra coverage review</label>
+              <textarea id="financeReview">Harbor Plaza Apts: 18 mins missed time. Finance to review deduction.</textarea>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head light"><strong>4. Operations Follow-Up</strong></div>
+            <div class="mini-section ops-box">
+              <label>Items Operations must own after Dispatch action</label>
+              <textarea id="opsFollowUp">Sunset Market: Confirm corrected hourly report and coach guard on report quality.</textarea>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head issue"><strong>5. Shift Handover</strong></div>
+            <div class="mini-section handover-box">
+              <label>Resolved, pending, and urgent notes for next CSR</label>
+              <textarea id="shiftHandover">Resolved: Oakview Hotel clear. Pending: Confirm Harbor Plaza deduction and Sunset Market corrected report.</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head light">
+            <strong>6. Legend</strong>
+            <small>Use short codes so reports stay clean.</small>
+          </div>
+          <div class="legend">
+            <div><b>LC</b> Late Clock-In</div>
+            <div><b>EC</b> Early Clock-Out</div>
+            <div><b>MC</b> Missed Clock-Out</div>
+            <div><b>NS</b> No-Show</div>
+            <div><b>BI</b> Break Issue</div>
+            <div><b>LP</b> Low Ping Score</div>
+            <div><b>RQ</b> Report Quality</div>
+            <div><b>FR</b> Finance Review</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <span>Prepared for Operations & Finance Review</span>
+        <span>Daily Dispatch Operations Command Report | Confidential</span>
+      </div>
+    </form>
+  </div>
+
+<script>
+function addSiteRow(){
+  var tbody=document.querySelector("#siteTable tbody"), tr=document.createElement("tr");
+  tr.innerHTML='<td><input value="New Site"></td><td><select><option>Yes</option><option>No</option></select></td><td><input value=""></td><td><input value=""></td><td><input value=""></td><td><textarea></textarea></td><td><select><option>None</option><option>Deduct</option><option>Review</option><option>Bill</option></select></td><td><select class="status-select-open"><option>Open</option><option>Clear</option><option>Resolved</option><option>Escalated</option></select></td>';
+  tbody.appendChild(tr);
+}
+function addIssueRow(){
+  var tbody=document.querySelector("#issueTable tbody"), tr=document.createElement("tr");
+  tr.innerHTML='<td><input value="New Site"></td><td><select class="issue-select"><option>Late Clock-In</option><option>Early Clock-Out</option><option>Missed Clock-Out</option><option>No-Show</option><option>Break Issue</option><option>Low Ping Score</option><option>Poor Report</option><option>Incident</option><option>Client Complaint</option><option>Hotline Issue</option></select></td><td><textarea></textarea></td><td><input value=""></td><td><input value=""></td><td><select class="issue-select"><option>Medium</option><option>High</option><option>Low</option></select></td><td><select class="status-select-open"><option>Open</option><option>Resolved</option><option>Escalated</option></select></td>';
+  tbody.appendChild(tr);
+}
+function clearForm(){
+  if(!confirm("Clear all typed values?")) return;
+  document.querySelectorAll("input,textarea").forEach(function(el){el.value=""});
+  document.querySelectorAll("select").forEach(function(el){el.selectedIndex=0});
+}
+function valueOf(el){
+  if(!el) return "";
+  if(el.tagName&&el.tagName.toLowerCase()==="select") return el.options[el.selectedIndex]?el.options[el.selectedIndex].text:"";
+  return el.value||"";
+}
+function getRowValues(tableSelector){
+  var rows=[];
+  document.querySelectorAll(tableSelector+" tbody tr").forEach(function(tr){
+    var vals=[];
+    tr.querySelectorAll("input,textarea,select").forEach(function(el){vals.push(valueOf(el));});
+    rows.push(vals);
+  });
+  return rows;
+}
+function cleanText(s){
+  return String(s==null?"":s)
+    .replace(/[“”]/g,'"').replace(/[‘’]/g,"'")
+    .replace(/[–—]/g,"-").replace(/→/g,">")
+    .replace(/•/g,"-").replace(/≥/g,">=").replace(/≤/g,"<=")
+    .replace(/[^\x09\x0A\x0D\x20-\x7E]/g,"");
+}
+function pdfEscape(s){
+  return cleanText(s).replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)");
+}
+
+function PDFBuilder(){
+  this.W=842; this.H=595; this.pages=[]; this.c=[];
+}
+PDFBuilder.prototype.rgb=function(hex){hex=hex.replace("#","");return [parseInt(hex.substr(0,2),16)/255,parseInt(hex.substr(2,2),16)/255,parseInt(hex.substr(4,2),16)/255];}
+PDFBuilder.prototype.fill=function(hex){var a=this.rgb(hex);this.c.push(a[0].toFixed(3)+" "+a[1].toFixed(3)+" "+a[2].toFixed(3)+" rg");}
+PDFBuilder.prototype.stroke=function(hex){var a=this.rgb(hex);this.c.push(a[0].toFixed(3)+" "+a[1].toFixed(3)+" "+a[2].toFixed(3)+" RG");}
+PDFBuilder.prototype.rect=function(x,y,w,h,hex){this.fill(hex);this.c.push(x+" "+y+" "+w+" "+h+" re f");}
+PDFBuilder.prototype.border=function(x,y,w,h,hex){this.stroke(hex);this.c.push("0.7 w "+x+" "+y+" "+w+" "+h+" re S");}
+PDFBuilder.prototype.text=function(txt,x,y,size,bold,color){this.fill(color||"#111827");this.c.push("BT /"+(bold?"F2":"F1")+" "+size+" Tf "+x+" "+y+" Td ("+pdfEscape(txt)+") Tj ET");}
+PDFBuilder.prototype.wrap=function(txt,maxChars,maxLines){
+  txt=cleanText(txt);
+  var words=txt.split(/\s+/).filter(Boolean),lines=[],cur="";
+  words.forEach(function(w){
+    if((cur+" "+w).trim().length>maxChars){if(cur)lines.push(cur);cur=w}
+    else cur=(cur+" "+w).trim();
+  });
+  if(cur)lines.push(cur);
+  if(maxLines&&lines.length>maxLines){lines=lines.slice(0,maxLines);lines[lines.length-1]=lines[lines.length-1].replace(/\.*$/,"")+"..."}
+  return lines;
+}
+PDFBuilder.prototype.multiline=function(txt,x,y,size,bold,color,maxChars,maxLines,lineH){
+  var self=this;
+  this.wrap(txt,maxChars,maxLines).forEach(function(l,i){self.text(l,x,y-(i*lineH),size,bold,color)});
+}
+PDFBuilder.prototype.cellText=function(txt,x,y,w,h,size,bold,color,maxLines){
+  var chars=Math.max(8,Math.floor(w/(size*0.47)));
+  this.multiline(txt,x+4,y+h-12,size,bold,color,chars,maxLines||2,size+2);
+}
+PDFBuilder.prototype.newPage=function(title,subtitle,pageNo){
+  if(this.c.length) this.pages.push(this.c.join("\n"));
+  this.c=[];
+  this.rect(0,0,this.W,this.H,"#ffffff");
+  this.rect(0,this.H-88,this.W,88,"#07182f");
+  this.rect(0,this.H-88,215,88,"#0f2d52");
+  this.text("AVENTUS",28,this.H-44,22,true,"#ffffff");
+  this.text("Dispatch Command Report",28,this.H-64,9,false,"#dbeafe");
+  this.text(title,238,this.H-40,18,true,"#ffffff");
+  this.multiline(subtitle||"",238,this.H-60,8,false,"#dbeafe",78,2,10);
+  this.rect(750,this.H-55,68,22,"#eff6ff");
+  this.text("Page "+pageNo,766,this.H-41,8,true,"#07182f");
+  this.text("Report Date: "+valueOf(document.getElementById("reportDate"))+" | Prepared By: "+valueOf(document.getElementById("preparedBy")),24,18,7,false,"#667085");
+}
+PDFBuilder.prototype.badge=function(txt,x,y,w,hex,textHex){
+  this.rect(x,y,w,16,hex);
+  this.text(txt,x+6,y+5,7,true,textHex||"#111827");
+}
+PDFBuilder.prototype.table=function(title,subtitle,x,y,width,headers,widths,rows,rowH,maxRows,color){
+  this.rect(x,y,width,24,color||"#f3f6fa");
+  this.border(x,y,width,24,"#d8e0ea");
+  this.text(title,x+8,y+9,10,true,color==="#07182f"?"#ffffff":"#07182f");
+  if(subtitle)this.text(subtitle,x+width-265,y+9,7,false,color==="#07182f"?"#dbeafe":"#667085");
+  var thY=y-20,cx=x,self=this;
+  headers.forEach(function(h,i){
+    var cw=widths[i]*width;
+    self.rect(cx,thY,cw,20,"#eaf0f7");
+    self.border(cx,thY,cw,20,"#d8e0ea");
+    self.cellText(h,cx,thY,cw,20,6,true,"#344054",1);
+    cx+=cw;
+  });
+  var startY=thY-rowH;
+  rows.slice(0,maxRows).forEach(function(r,ri){
+    var cy=startY-(ri*rowH),x2=x;
+    headers.forEach(function(h,i){
+      var cw=widths[i]*width;
+      self.rect(x2,cy,cw,rowH,ri%2===0?"#ffffff":"#fbfdff");
+      self.border(x2,cy,cw,rowH,"#edf1f6");
+      var val=r[i]||"";
+      var fill="#111827";
+      if(/open/i.test(val)) fill="#b54708";
+      if(/escalated|urgent/i.test(val)) fill="#b42318";
+      if(/clear|resolved/i.test(val)) fill="#067647";
+      if(/deduct|review|bill/i.test(val)) fill="#067647";
+      self.cellText(val,x2,cy,cw,rowH,6.8,false,fill,rowH>=42?4:3);
+      x2+=cw;
+    });
+  });
+  return startY-(Math.min(rows.length,maxRows)*rowH);
+}
+PDFBuilder.prototype.finalize=function(){
+  if(this.c.length) this.pages.push(this.c.join("\n"));
+  this.c=[];
+  var objects=[];
+  objects.push("<< /Type /Catalog /Pages 2 0 R >>");
+  var kids=[], objIndex=3;
+  for(var i=0;i<this.pages.length;i++){kids.push(objIndex+" 0 R");objIndex++;}
+  objects.push("<< /Type /Pages /Kids ["+kids.join(" ")+"] /Count "+this.pages.length+" >>");
+  var font1=3+this.pages.length, font2=font1+1, contentStart=font2+1;
+  for(var p=0;p<this.pages.length;p++){
+    objects.push("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 "+this.W+" "+this.H+"] /Resources << /Font << /F1 "+font1+" 0 R /F2 "+font2+" 0 R >> >> /Contents "+(contentStart+p)+" 0 R >>");
+  }
+  objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+  objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+  for(var p2=0;p2<this.pages.length;p2++){
+    var s=this.pages[p2];
+    objects.push("<< /Length "+s.length+" >>\nstream\n"+s+"\nendstream");
+  }
+  var pdf="%PDF-1.4\n%\xE2\xE3\xCF\xD3\n", offsets=[0];
+  objects.forEach(function(obj,i){offsets.push(pdf.length);pdf+=(i+1)+" 0 obj\n"+obj+"\nendobj\n";});
+  var xref=pdf.length;
+  pdf+="xref\n0 "+(objects.length+1)+"\n0000000000 65535 f \n";
+  for(var oi=1;oi<offsets.length;oi++) pdf+=String(offsets[oi]).padStart(10,"0")+" 00000 n \n";
+  pdf+="trailer\n<< /Size "+(objects.length+1)+" /Root 1 0 R >>\nstartxref\n"+xref+"\n%%EOF";
+  return pdf;
+}
+
+function makePDF(){
+  var pdf=new PDFBuilder();
+
+  // Page 1
+  pdf.newPage("Daily Dispatch Report Tracker","Executive summary, KPIs, and active site review.",1);
+
+  var statusY=475;
+  pdf.rect(24,statusY,180,54,"#eff6ff"); pdf.border(24,statusY,180,54,"#bfdbfe");
+  pdf.text("OVERALL STATUS",36,statusY+34,8,true,"#07182f");
+  pdf.multiline(valueOf(document.getElementById("overallStatus")),36,statusY+18,10,true,"#2563eb",27,2,12);
+
+  pdf.rect(216,statusY,130,54,"#fff4e5"); pdf.border(216,statusY,130,54,"#fed7aa");
+  pdf.text("PRIORITY",228,statusY+34,8,true,"#7a2e0e");
+  pdf.multiline(valueOf(document.getElementById("reportPriority")),228,statusY+18,10,true,"#b54708",20,2,12);
+
+  var meta=[
+    ["Coverage",valueOf(document.getElementById("coveragePeriod"))],
+    ["Reviewed By",valueOf(document.getElementById("reviewedBy"))],
+    ["Handover To",valueOf(document.getElementById("handoverTo"))],
+    ["Submitted",valueOf(document.getElementById("submittedTime"))]
+  ];
+  meta.forEach(function(m,i){
+    var x=360+i*115;
+    pdf.rect(x,statusY,104,54,"#fbfdff");
+    pdf.border(x,statusY,104,54,"#d8e0ea");
+    pdf.text(m[0],x+7,statusY+34,7,true,"#667085");
+    pdf.cellText(m[1],x+3,statusY+6,98,26,7.5,true,"#101828",2);
+  });
+
+  var kpis=[
+    ["Active",valueOf(document.getElementById("kpiActive")),"#eaf3ff","#2563eb"],
+    ["Reviewed",valueOf(document.getElementById("kpiReviewed")),"#e8f7ef","#067647"],
+    ["Attendance",valueOf(document.getElementById("kpiAttendance")),"#fff4e5","#b54708"],
+    ["Break",valueOf(document.getElementById("kpiBreak")),"#fff4e5","#b54708"],
+    ["Ping <90%",valueOf(document.getElementById("kpiPing")),"#fff0f0","#b42318"],
+    ["Reports",valueOf(document.getElementById("kpiReports")),"#f3efff","#6941c6"],
+    ["Finance",valueOf(document.getElementById("kpiFinance")),"#e8f7ef","#067647"],
+    ["Open",valueOf(document.getElementById("kpiOpen")),"#fff0f0","#b42318"]
+  ];
+  kpis.forEach(function(k,i){
+    var x=24+i*99;
+    pdf.rect(x,410,91,46,k[2]); pdf.border(x,410,91,46,"#d8e0ea");
+    pdf.text(k[1],x+38,433,18,true,k[3]);
+    pdf.text(k[0],x+8,419,7,true,"#475467");
+  });
+
+  pdf.table("1. Active Site Review","Every active site must be included, even if clear.",24,380,794,
+    ["Site","Reviewed","Attendance","Ping","Reports","Action Taken / Notes","Finance","Status"],
+    [.14,.07,.14,.07,.11,.30,.08,.09],
+    getRowValues("#siteTable"),39,7,"#07182f");
+
+  // Page 2 issues, split if many rows
+  var issueRows=getRowValues("#issueTable");
+  var perPage=9;
+  for(var start=0,page=2; start<issueRows.length; start+=perPage,page++){
+    var chunk=issueRows.slice(start,start+perPage);
+    pdf.newPage("Issue Tracker","All issues are visible here with action taken, owner, next step, and status.",page);
+    pdf.table("2. Issue Tracker","Problem found > action taken > owner > next step.",24,500,794,
+      ["Site","Issue Type","Action Taken by Dispatch","Escalated / Owner","Next Step","Priority","Status"],
+      [.13,.14,.29,.15,.16,.06,.07],
+      chunk,43,perPage,"#fff4e5");
+  }
+
+  // Final page
+  var finalPage=2+Math.ceil(Math.max(1,issueRows.length)/perPage);
+  pdf.newPage("Finance + Operations Follow-Up","Separated so Finance and Operations do not search through paragraphs.",finalPage);
+
+  function card(title,txt,x,y,w,h,headColor,bodyColor){
+    pdf.rect(x,y+h-24,w,24,headColor); pdf.border(x,y+h-24,w,24,"#d8e0ea");
+    pdf.text(title,x+10,y+h-15,10,true,headColor==="#07182f"?"#ffffff":"#07182f");
+    pdf.rect(x,y,w,h-24,bodyColor); pdf.border(x,y,w,h-24,"#d8e0ea");
+    pdf.multiline(txt,x+12,y+h-46,8,false,"#101828",58,10,11);
+  }
+  card("3. Finance Review",valueOf(document.getElementById("financeReview")),24,330,250,148,"#e8f7ef","#ffffff");
+  card("4. Operations Follow-Up",valueOf(document.getElementById("opsFollowUp")),296,330,250,148,"#eaf3ff","#ffffff");
+  card("5. Shift Handover",valueOf(document.getElementById("shiftHandover")),568,330,250,148,"#fff4e5","#ffffff");
+
+  pdf.table("6. Legend","Use these codes for short and clean report entries.",24,270,794,
+    ["Code","Meaning","Code","Meaning","Code","Meaning","Code","Meaning"],
+    [.08,.17,.08,.17,.08,.17,.08,.17],
+    [
+      ["LC","Late Clock-In","EC","Early Clock-Out","MC","Missed Clock-Out","NS","No-Show"],
+      ["BI","Break Issue","LP","Low Ping Score","RQ","Report Quality","FR","Finance Review"]
+    ],28,2,"#f7faff");
+
+  return pdf.finalize();
+}
+
+function downloadPDF(){
+  try{
+    var blob=new Blob([makePDF()],{type:"application/pdf"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");
+    var date=cleanText(valueOf(document.getElementById("reportDate"))||"Daily_Report").replace(/[^A-Za-z0-9]+/g,"_");
+    a.href=url;
+    a.download="Aventus_Command_Dispatch_Report_"+date+".pdf";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  }catch(e){
+    alert("PDF download failed in this browser. Please use Print Backup.");
+    console.error(e);
+  }
+}
+</script>
+</body>
+</html>
