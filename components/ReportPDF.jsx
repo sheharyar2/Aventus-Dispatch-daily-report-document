@@ -1,20 +1,30 @@
 import { Document, Page, View, Text, StyleSheet, Font } from "@react-pdf/renderer";
 import { computeDashboard, attendanceNote, badgeTone } from "@/lib/model";
+import {
+  geistRegular,
+  geistSemiBold,
+  geistBold,
+  geistMonoMedium,
+  geistMonoSemiBold,
+} from "@/lib/fonts";
 
-// Register Geist + Geist Mono (the only two fonts) from local TTFs.
+// Register Geist + Geist Mono (the only two fonts) from embedded base64 data
+// URIs. We deliberately do NOT fetch /fonts/*.ttf over HTTP: under any non-root
+// deploy (subpath, proxy, file://) that path 404s and returns an HTML page,
+// which fontkit rejects with "Unknown font format". Embedding sidesteps that.
 Font.register({
   family: "Geist",
   fonts: [
-    { src: "/fonts/Geist-Regular.ttf", fontWeight: 400 },
-    { src: "/fonts/Geist-SemiBold.ttf", fontWeight: 600 },
-    { src: "/fonts/Geist-Bold.ttf", fontWeight: 700 },
+    { src: geistRegular, fontWeight: 400 },
+    { src: geistSemiBold, fontWeight: 600 },
+    { src: geistBold, fontWeight: 700 },
   ],
 });
 Font.register({
   family: "Geist Mono",
   fonts: [
-    { src: "/fonts/GeistMono-Medium.ttf", fontWeight: 500 },
-    { src: "/fonts/GeistMono-SemiBold.ttf", fontWeight: 600 },
+    { src: geistMonoMedium, fontWeight: 500 },
+    { src: geistMonoSemiBold, fontWeight: 600 },
   ],
 });
 Font.registerHyphenationCallback((word) => [word]); // don't hyphenate
