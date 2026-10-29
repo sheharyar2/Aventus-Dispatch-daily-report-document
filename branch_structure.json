@@ -1,0 +1,15 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "feat/nextjs-client-side-pdf",
+    "main"
+  ],
+  "parent": {
+    "feat/nextjs-client-side-pdf": "main",
+    "main": null
+  },
+  "order": [
+    "main",
+    "feat/nextjs-client-side-pdf"
+  ]
+}
