@@ -1,5 +1,8 @@
 /node_modules
 /.next
+temp_auto_push.bat
 /out
 *.log
 .DS_Store
+.gitignore
+branch_structure.json
